@@ -34,6 +34,20 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('home')->with('success', 'Produkt został dodany.');
+        return redirect()->route('welcome')->with('success', 'Produkt został dodany.');
+    }
+
+    //usunięcie albo poprawienie w innnym miejscu
+    public function showAll()
+    {
+        $products = \App\Models\Product::with('eanCodes')->get();
+        return view('products.show', compact('products'));
+    }
+
+    //potem do usunięcia, poprawienia w innych miejscach
+    public function raport()
+    {
+        $products = \App\Models\Product::with('eanCodes')->get();
+        return view('products.raport', compact('products'));
     }
 }
