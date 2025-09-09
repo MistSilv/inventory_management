@@ -1,62 +1,78 @@
-<x-layout title="Dodaj produkt">
-    <h1 class="text-2xl font-bold mb-6 text-slate-100">Dodaj nowy produkt</h1>
+<x-layout>
+    <div class="max-w-xl mx-auto p-6 bg-gray-900 shadow-lg rounded-lg text-white min-h-screen">
+        <h1 class="text-2xl font-bold mb-6 text-green-500">Dodaj produkt</h1>
 
-    @if ($errors->any())
-        <div class="bg-red-800/20 text-red-400 border border-red-500/30 p-4 rounded mb-6">
-            <ul class="list-disc list-inside space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+        {{-- Komunikat sukcesu --}}
+        @if(session('success'))
+            <div class="mb-6 p-3 bg-green-800 text-green-200 rounded">
+                {{ session('success') }}
+            </div>
+        @endif
 
-    <form action="{{ route('produkty.store') }}" method="POST" class="space-y-6 bg-slate-900 p-6 rounded-lg shadow-lg border border-slate-800">
-        @csrf
+        <form method="POST" action="{{ route('products.store') }}" class="space-y-6">
+            @csrf
 
-        <div>
-            <label for="nazwa" class="block font-semibold text-slate-100 mb-1">Nazwa produktu</label>
-            <input type="text" name="nazwa" id="nazwa" value="{{ old('nazwa') }}"
-                   class="w-full bg-slate-800 border border-emerald-600/50 text-slate-100 p-2 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
-        </div>
+            {{-- Nazwa produktu --}}
+            <div>
+                <label class="block text-sm font-medium text-green-300 mb-1">Nazwa *</label>
+                <input type="text" name="name" value="{{ old('name') }}"
+                       class="w-full bg-gray-800 text-white border-gray-700 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 p-2">
+                @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
 
-        <div>
-            <label for="id_abaco" class="block font-semibold text-slate-100 mb-1">ID Abaco</label>
-            <input type="text" name="id_abaco" id="id_abaco" value="{{ old('id_abaco') }}"
-                   class="w-full bg-slate-800 border border-emerald-600/50 text-slate-100 p-2 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
-        </div>
+            {{-- SKU --}}
+            <div>
+                <label class="block text-sm font-medium text-green-300 mb-1">SKU</label>
+                <input type="text" name="sku" value="{{ old('sku') }}"
+                       class="w-full bg-gray-800 text-white border-gray-700 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 p-2">
+            </div>
 
-        <div id="ean-wrapper">
-            <label class="block font-semibold text-slate-100 mb-2">Kody EAN</label>
+            {{-- Jednostka --}}
+            <div>
+                <label class="block text-sm font-medium text-green-300 mb-1">Jednostka *</label>
+                <select name="unit"
+                        class="w-full bg-gray-800 text-white border-gray-700 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 p-2">
+                    <option value="">-- wybierz --</option>
+                    @foreach(['szt','kg','m','l','opak'] as $unit)
+                        <option value="{{ $unit }}" {{ old('unit') == $unit ? 'selected' : '' }}>
+                            {{ strtoupper($unit) }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('unit') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
 
-            <div class="flex space-x-2 mb-2">
-                <input type="text" name="ean_codes[]" placeholder="Wpisz kod EAN"
-                       class="flex-1 bg-slate-800 border border-emerald-600/50 text-slate-100 p-2 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
-                <button type="button" onclick="addEanInput()"
-                        class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded transition">
-                    +
+            {{-- Kody EAN --}}
+            <div>
+                <label class="block text-sm font-medium text-green-300 mb-1">Kody EAN</label>
+                <div id="ean-wrapper" class="space-y-2">
+                    <input type="text" name="ean_codes[]" value="{{ old('ean_codes.0') }}"
+                           class="w-full bg-gray-800 text-white border-gray-700 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 p-2">
+                </div>
+                <button type="button" onclick="addEan()"
+                        class="mt-2 px-3 py-1 bg-green-700 text-white rounded hover:bg-green-600 text-sm">
+                    ➕ Dodaj kolejny EAN
                 </button>
             </div>
-        </div>
 
-        <button type="submit"
-                class="w-full sm:w-auto px-6 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold rounded transition">
-            Zapisz
-        </button>
-    </form>
+            {{-- Submit --}}
+            <div class="flex justify-end">
+                <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600">
+                    Zapisz
+                </button>
+            </div>
+        </form>
+    </div>
 
+    {{-- Skrypt dynamicznego dodawania EAN --}}
     <script>
-        function addEanInput() {
+        function addEan() {
             const wrapper = document.getElementById('ean-wrapper');
-            const div = document.createElement('div');
-            div.classList.add('flex', 'space-x-2', 'mb-2');
-            div.innerHTML = `
-                <input type="text" name="ean_codes[]" placeholder="Wpisz kod EAN"
-                       class="flex-1 bg-slate-800 border border-emerald-600/50 text-slate-100 p-2 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500/60 transition">
-                <button type="button" onclick="this.parentElement.remove()"
-                        class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-semibold rounded transition">-</button>
-            `;
-            wrapper.appendChild(div);
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = 'ean_codes[]';
+            input.className = 'w-full bg-gray-800 text-white border-gray-700 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 p-2';
+            wrapper.appendChild(input);
         }
     </script>
 </x-layout>

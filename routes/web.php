@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StocktakingController;
 
 // Przekierowanie ze strony głównej na /login
 Route::get('/', function () {
@@ -28,12 +29,41 @@ Route::middleware('auth')->group(function () {
         return view('welcome');
     })->name('welcome');
 
-    Route::get('/produkty/create', [ProductController::class, 'create'])->name('produkty.create');
-    Route::post('/produkty', [ProductController::class, 'store'])->name('produkty.store');
+    Route::resource('products', ProductController::class);
 
-    Route::get('/produkty', [ProductController::class, 'showAll'])->name('produkty');
+    Route::resource('stocktakings', StocktakingController::class)->except(['edit', 'update', 'destroy']);
+    Route::post('stocktakings/{stocktaking}/items', [StocktakingController::class, 'addItem'])->name('stocktakings.addItem');
+
+    // **Nowe trasy dla generowania i edycji spisu**
+Route::get('/stocktakings/{stocktaking}/generate', [StocktakingController::class, 'generate'])
+    ->name('stocktakings.generate'); // otwiera stronę w nowej karcie
+
+Route::put('/stocktakings/{stocktaking}/update-items', [StocktakingController::class, 'updateItems'])
+    ->name('stocktakings.updateItems'); // zapis zmian w tabeli
+
+Route::delete('/stocktakings/item/{item}', [StocktakingController::class, 'deleteItem'])
+    ->name('stocktakings.deleteItem'); // usuwanie pojedynczej pozycji
+
+    Route::get('/stocktakings/{stocktaking}/print', [StocktakingController::class, 'print'])
+    ->name('stocktakings.print');
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // idk do wyjebania kiedyś to na dole wszystko
 
     Route::get('/raporty', [ProductController::class, 'raport'])->name('raporty');
+
+
 
     // Ustawienia
     Route::get('/settings', function () {

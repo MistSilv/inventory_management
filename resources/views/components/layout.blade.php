@@ -35,7 +35,7 @@
                 <a href="{{ route('welcome') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
                     Strona Główna
                 </a>
-                <a href="{{ route('produkty') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
+                <a href="{{ route('products.index') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
                     Produkty
                 </a>
                 <a href="{{ route('raporty') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
@@ -59,7 +59,7 @@
             <a href="{{ route('welcome') }}" class="block px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
                 Strona Główna
             </a>
-            <a href="{{ route('produkty') }}" class="block px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
+            <a href="{{ route('products.index') }}" class="block px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
                 Produkty
             </a>
             <a href="{{ route('raporty') }}" class="block px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">

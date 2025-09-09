@@ -8,15 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    public $timestamps = false;
 
     protected $fillable = [
-        'nazwa',
-        'id_abaco',
+        'name',
+        'sku',
+        'description',
+        'unit',
     ];
 
-    public function eanCodes()
+    // Relacja do kodów EAN (jeden produkt może mieć wiele kodów)
+    public function barcodes()
     {
-        return $this->hasMany(EanCode::class, 'produkt_id');
+        return $this->hasMany(Barcode::class);
+    }
+
+    // Relacja do pozycji spisu (stocktaking_items)
+    public function stocktakingItems()
+    {
+        return $this->hasMany(StocktakingItem::class);
     }
 }

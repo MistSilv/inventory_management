@@ -3,27 +3,68 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
+        // USERS
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->enum('role', ['pracownik','ksiegowy','kierownik','admin'])->default('pracownik');
             $table->timestamps();
-            $table->enum('rola', ['pracownik','ksiegowy','kierownik','admin'])->default('pracownik');
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
+        // PRODUCTS
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('sku')->nullable(); // np. id_abaco
+            $table->enum('unit', ['szt', 'kg', 'm', 'l', 'opak']);
+            $table->timestamps();
+        });
+
+        // BARCODES
+        Schema::create('barcodes', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->string('code', 13); // np. EAN-13
+            $table->timestamps();
+        });
+
+        // STOCKTAKINGS (nagłówki spisów)
+        Schema::create('stocktakings', function (Blueprint $table) {
+            $table->id();
+            $table->date('date');
+            $table->string('description')->nullable();
+            $table->enum('status', ['draft', 'in_progress', 'closed'])->default('draft');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        // STOCKTAKING ITEMS (pozycje w spisie)
+        Schema::create('stocktaking_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('stocktaking_id')->constrained('stocktakings')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->decimal('quantity', 12, 3); // np. kg/l/m
+            $table->decimal('price', 10, 2);
+            $table->timestamps();
+        });
+
+        // AUDYT / LOGI DODANIA POZYCJI
+        Schema::create('stocktaking_item_logs', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('stocktaking_item_id')->constrained('stocktaking_items')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users'); // kto wykonał akcję
+            $table->enum('action', ['create', 'update', 'delete'])->default('create');
+            $table->timestamps();
+        });
+
+	Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
@@ -81,58 +122,22 @@ return new class extends Migration
             $table->longText('exception');
             $table->timestamp('failed_at')->useCurrent();
         });
-
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('nazwa');
-            $table->string('id_abaco')->nullable();
-        });
-
-        Schema::create('ean_codes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('produkt_id')->constrained('products')->onDelete('cascade');
-            $table->string('kod_ean', 13);
-        });
-
-        Schema::create('stocktaking', function (Blueprint $table) {
-            $table->id();
-            $table->date('data');
-            $table->string('opis')->nullable();
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->nullable();
-        });
-
-        Schema::create('produkt_informacje', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('produkt_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('id_inventaryzacji')->constrained('stocktaking')->onDelete('cascade');
-            $table->decimal('cena', 10, 2);
-            $table->integer('ilość');
-            $table->enum('jm', ['szt', 'kg', 'm', 'l', 'opak']);
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->nullable();
-            
-        });
-
-
-
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
+        Schema::dropIfExists('stocktaking_items');
+        Schema::dropIfExists('stocktakings');
+        Schema::dropIfExists('barcodes');
+        Schema::dropIfExists('products');
         Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
+	    Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('cache');
         Schema::dropIfExists('cache_locks');
         Schema::dropIfExists('jobs');
         Schema::dropIfExists('job_batches');
         Schema::dropIfExists('failed_jobs');
-        Schema::dropIfExists('products');
-
+        Schema::blueprintResolver('stocktaking_item_logs');
     }
 };

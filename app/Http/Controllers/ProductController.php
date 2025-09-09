@@ -3,51 +3,57 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\EanCode;
+use App\Models\Barcode;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function index()
+    {
+        $products = Product::with('barcodes')->latest()->paginate(10);
+        return view('products.index', compact('products'));
+    }
+
     public function create()
     {
-        return view('products.create');
+        $units = ['szt', 'kg', 'm', 'l', 'opak'];
+        return view('products.create', compact('units'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nazwa' => 'required|string|max:255',
-            'id_abaco' => 'nullable|string|max:255',
-            'ean_codes.*' => 'nullable|string|size:13',
+            'name' => 'required|string|max:255',
+            'sku' => 'nullable|string|max:255',
+            'unit' => 'required|in:szt,kg,m,l,opak',
+            'ean_codes' => 'array',
+            'ean_codes.*' => 'nullable|string|max:13',
         ]);
 
         $product = Product::create([
-            'nazwa' => $validated['nazwa'],
-            'id_abaco' => $validated['id_abaco'] ?? null,
+            'name' => $validated['name'],
+            'sku' => $validated['sku'] ?? null,
+            'unit' => $validated['unit'],
         ]);
 
         if (!empty($validated['ean_codes'])) {
-            foreach ($validated['ean_codes'] as $code) {
-                if ($code) {
-                    $product->eanCodes()->create(['kod_ean' => $code]);
+            foreach ($validated['ean_codes'] as $ean) {
+                if (!empty($ean)) {
+                    $product->barcodes()->create(['code' => $ean]);
                 }
             }
         }
 
-        return redirect()->route('welcome')->with('success', 'Produkt został dodany.');
+        return redirect()->route('products.create')->with('success', 'Produkt został dodany');
     }
 
-    //usunięcie albo poprawienie w innnym miejscu
-    public function showAll()
+    public function show(Product $product)
     {
-        $products = \App\Models\Product::with('eanCodes')->get();
-        return view('products.show', compact('products'));
+        // Ładowanie powiązanych kodów EAN
+        $product->load('barcodes');
+
+        return view('products.show', compact('product'));
     }
 
-    //potem do usunięcia, poprawienia w innych miejscach
-    public function raport()
-    {
-        $products = \App\Models\Product::with('eanCodes')->get();
-        return view('products.raport', compact('products'));
-    }
 }
+
