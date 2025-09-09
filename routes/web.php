@@ -4,11 +4,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 
-// Strona startowa (login) dla niezalogowanych
-Route::get('/', [AuthController::class, 'showLogin'])->middleware('guest')->name('login');
+// Przekierowanie ze strony głównej na /login
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
+// Strona logowania dla niezalogowanych
+Route::get('/login', [AuthController::class, 'showLogin'])->middleware('guest')->name('login');
 
 // Logowanie
-Route::post('/login', [AuthController::class, 'login'])->middleware('guest')->name('login');
+Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 
 // Wylogowanie
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -30,7 +35,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/raporty', [ProductController::class, 'raport'])->name('raporty');
 
+    // Ustawienia
+    Route::get('/settings', function () {
+        return view('settings');
+    })->name('settings');
     Route::get('/ustawienia', function () {
-        return redirect()->route('welcome');
+        return redirect()->route('settings');
     })->name('ustawienia');
 });

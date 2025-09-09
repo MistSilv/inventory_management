@@ -8,10 +8,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="manifest" href="/manifest.webmanifest">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen">
+<body class="bg-black text-slate-100 min-h-screen">
 
 <header>
-    <nav class="bg-slate-900 border-b border-emerald-600/50">
+    <nav class="bg-black border-b border-emerald-600/50">
         <div class="container mx-auto flex items-center justify-between px-4 py-3">
             @auth
                 <div class="flex items-center space-x-2">
@@ -32,16 +32,16 @@
             </div>
 
             <div class="hidden sm:flex space-x-4">
-                <a href="{{ route('welcome') }}" class="px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
+                <a href="{{ route('welcome') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
                     Strona Główna
                 </a>
-                <a href="{{ route('produkty') }}" class="px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
+                <a href="{{ route('produkty') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
                     Produkty
                 </a>
-                <a href="{{ route('raporty') }}" class="px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
+                <a href="{{ route('raporty') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
                     Raporty
                 </a>
-                <a href="{{ route('ustawienia') }}" class="px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
+                <a href="{{ route('ustawienia') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
                     Ustawienia
                 </a>
 
