@@ -41,11 +41,18 @@ Route::get('/stocktakings/{stocktaking}/generate', [StocktakingController::class
 Route::put('/stocktakings/{stocktaking}/update-items', [StocktakingController::class, 'updateItems'])
     ->name('stocktakings.updateItems'); // zapis zmian w tabeli
 
-Route::delete('/stocktakings/item/{item}', [StocktakingController::class, 'deleteItem'])
-    ->name('stocktakings.deleteItem'); // usuwanie pojedynczej pozycji
-
     Route::get('/stocktakings/{stocktaking}/print', [StocktakingController::class, 'print'])
     ->name('stocktakings.print');
+
+    Route::post('/stocktakings/{stocktaking}/remember-selected', [StocktakingController::class, 'rememberSelected'])
+    ->name('stocktakings.rememberSelected');
+
+Route::delete('/stocktakings/item/{item}', [StocktakingController::class, 'deleteItem'])
+    ->name('stocktakings.deleteItem');
+
+
+   
+
 
 
 

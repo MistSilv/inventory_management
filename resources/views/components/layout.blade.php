@@ -38,11 +38,13 @@
                 <a href="{{ route('products.index') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
                     Produkty
                 </a>
-                <a href="{{ route('raporty') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
-                    Raporty
+                <a href="{{ route('stocktakings.index') }}"
+                class="px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('stocktakings.index') ? 'bg-gray-700' : '' }}">
+                Lista spisów
                 </a>
-                <a href="{{ route('ustawienia') }}" class="px-4 py-2 rounded bg-green-900 hover:bg-green-700 text-white font-semibold transition">
-                    Ustawienia
+                <a href="{{ route('stocktakings.create') }}"
+                class="px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('stocktakings.create') ? 'bg-gray-700' : '' }}">
+                Nowy spis
                 </a>
 
                 <form method="POST" action="{{ route('logout') }}">
@@ -62,11 +64,13 @@
             <a href="{{ route('products.index') }}" class="block px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
                 Produkty
             </a>
-            <a href="{{ route('raporty') }}" class="block px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
-                Raporty
+            <a href="{{ route('stocktakings.index') }}"
+            class="px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('stocktakings.index') ? 'bg-gray-700' : '' }}">
+            Lista spisów
             </a>
-            <a href="{{ route('ustawienia') }}" class="block px-4 py-2 rounded bg-emerald-800 hover:bg-emerald-600 text-white font-semibold transition">
-                Ustawienia
+            <a href="{{ route('stocktakings.create') }}"
+            class="px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('stocktakings.create') ? 'bg-gray-700' : '' }}">
+            Nowy spis
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

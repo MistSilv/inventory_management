@@ -8,11 +8,37 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('barcodes')->latest()->paginate(10);
+        $query = Product::query()->with('barcodes');
+
+        // Szukanie po nazwie / EAN
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhereHas('barcodes', function ($b) use ($search) {
+                    $b->where('code', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Filtrowanie po dacie od
+        if ($dateFrom = $request->input('date_from')) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+
+        // Filtrowanie po dacie do
+        if ($dateTo = $request->input('date_to')) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        $products = $query->latest()->paginate(25)->withQueryString();
+
         return view('products.index', compact('products'));
     }
+
+
+
 
     public function create()
     {

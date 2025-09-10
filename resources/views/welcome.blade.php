@@ -14,14 +14,7 @@
     <p>Wstaw gdzie indziej potem</p>
     <nav class="bg-gray-800 text-white p-4 mb-6 rounded-lg shadow flex justify-between items-center">
         <div class="flex space-x-4">
-            <a href="{{ route('stocktakings.index') }}"
-            class="px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('stocktakings.index') ? 'bg-gray-700' : '' }}">
-            Lista spisów
-            </a>
-            <a href="{{ route('stocktakings.create') }}"
-            class="px-3 py-2 rounded hover:bg-gray-700 {{ request()->routeIs('stocktakings.create') ? 'bg-gray-700' : '' }}">
-            Nowy spis
-            </a>
+            
         </div>
         @isset($stocktaking)
             <a href="{{ route('stocktakings.show', $stocktaking) }}"

@@ -50,9 +50,24 @@ return new class extends Migration
             $table->id();
             $table->foreignId('stocktaking_id')->constrained('stocktakings')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->decimal('quantity', 12, 3); // np. kg/l/m
+            $table->decimal('quantity', 12, 2); 
             $table->decimal('price', 10, 2);
             $table->timestamps();
+        });
+
+        //do chech boxów w trakcie tworzenia spisu
+        Schema::create('stocktaking_temp_items', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('stocktaking_id');
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('user_id'); 
+            $table->boolean('selected')->default(false);
+            $table->decimal('quantity', 12, 2)->nullable();
+            $table->decimal('price', 10, 2)->nullable();
+            $table->timestamps();
+
+            $table->foreign('stocktaking_id')->references('id')->on('stocktakings')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
 
         // AUDYT / LOGI DODANIA POZYCJI
@@ -139,5 +154,6 @@ return new class extends Migration
         Schema::dropIfExists('job_batches');
         Schema::dropIfExists('failed_jobs');
         Schema::blueprintResolver('stocktaking_item_logs');
+        Schema::dropIfExists('stocktaking_temp_items');
     }
 };
